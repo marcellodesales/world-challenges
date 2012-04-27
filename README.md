@@ -1,7 +1,5 @@
-Platform Engineer Coding Exercise
+Reverse String Server Counter
 ===========================================
-
-## Reverse String Server Counter
 
 This is a TCP server, listening to port 4567, that can revert your strings and maintain a shared
 counter.
@@ -68,6 +66,7 @@ At this point you can issue the commands to the server. Here's the interaction b
 * "string 3"
  - The server will return the reverted input with the incremented value of the request "gnirts 4".
  - Note that the reset value will only occur when the current server's value is smaller than the received one.
+   That is, "string 2" will result in "gnirts 5".
 
 * "/q"
 * "/quit"
@@ -75,7 +74,7 @@ At this point you can issue the commands to the server. Here's the interaction b
 
 ## Session Example
 
-* Client 1
+Client 1: started the interaction, entering wrong command..
 
     marcello@hawaii:/u1/development/workspaces/open-source/google-go-tutorial/src$ telnet localhost 4567
     Trying 127.0.0.1...
@@ -91,7 +90,7 @@ At this point you can issue the commands to the server. Here's the interaction b
     Have a nice day!
     Connection closed by foreign host.
 
-* Client 2
+Client 2: started the interaction after client 2, and set a new number.
 
     marcello@hawaii:/u1/development/workspaces/open-source/google-go-tutorial/src$ telnet localhost 4567
     Trying 127.0.0.1...
@@ -103,4 +102,4 @@ At this point you can issue the commands to the server. Here's the interaction b
     eldarG 51
     /q
     Have a nice day!
-    Connection closed by foreign host. 
+    Connection closed by foreign host.
