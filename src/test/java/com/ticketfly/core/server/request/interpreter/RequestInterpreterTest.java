@@ -66,9 +66,10 @@ public class RequestInterpreterTest {
   }
 
   @Test(expected = RequestInterpretationException.class)
-  public void testExceptionThrownOnEmptyRequest() throws RequestInterpretationException {
+  public void testCantInterpretEmptyRequest() throws RequestInterpretationException {
     String clientInput = "";
     RequestTypeInterpreter.interpret(clientInput);
+    fail("This exception should never occur");
   }
 
 }

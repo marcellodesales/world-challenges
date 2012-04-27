@@ -46,7 +46,7 @@ def jarName = "$archivesBaseName-$version" + ".jar"
  */
 jar {
    manifest {
-       attributes 'Implementation-Title': 'RSA Signr',
+       attributes 'Implementation-Title': 'TicketFly Server',
                   'Implementation-Version': version, 'Created-By': "Marcello de Sales",
                   'Main-Class': mainClient
    }
