@@ -106,7 +106,7 @@ Client 2: started the interaction after client 2, and set a new number.
 
 ## Troubleshooting
 
-* After changing the code, make sure the important pieces are working! Run the server tests!
+After changing the code, make sure the important pieces are working! Run the server tests!
 
     marcello@hawaii:/u1/development/workspaces/open-source/challenges/ticketly$ gradle test
     :compileJava UP-TO-DATE
