@@ -68,7 +68,7 @@ jar {
      println ""
      println "##############################"
      println "WOOOHOOO! FINISHED!"
-     println "You are ready to run the command \"./run.sh --help\" for instructions!"
+     println "You are ready to run the command \"./run.sh"
      println "##############################"
    }
 }
