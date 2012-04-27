@@ -36,8 +36,8 @@ sourceCompatibility = 1.7
 */
 version = 1.0
 
-archivesBaseName = "PROJECT-PACKAGE"
-def mainClient = archivesBaseName + "MAIN-CLASS"
+archivesBaseName = "TflyServer"
+def mainClient = "com.ticketfly.core.server.TicketFlyTCPServer"
 def jarName = "$archivesBaseName-$version" + ".jar"
 
 /*
@@ -46,7 +46,7 @@ def jarName = "$archivesBaseName-$version" + ".jar"
  */
 jar {
    manifest {
-       attributes 'Implementation-Title': 'TicketFly Server',
+       attributes 'Implementation-Title': 'TicketFly TCP Server',
                   'Implementation-Version': version, 'Created-By': "Marcello de Sales",
                   'Main-Class': mainClient
    }

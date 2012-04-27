@@ -1,67 +1,106 @@
-Ticketfly Platform Engineer Coding Exercise
+Platform Engineer Coding Exercise
 ===========================================
 
-## Simple Server
+## Reverse String Server Counter
 
-Write a simple server in a JVM language of your choosing that will bind to a port and listen for TCP requests. 
-The server should not run in a container. It should be able to be started with a 'java -jar TflyServer.jar'. The 
-server should accept string requests and give string responses. I should be able to connect to the server and 
-execute a request with something simple like telnet:
+This is a TCP server, listening to port 4567, that can revert your strings and maintain a shared
+counter.
 
-    > telnet localhost 4567
-    telnet> my_request_string
-  
-## Included Service
+## Building 
 
-Included with the exercise is a jar with a mock service, TflyService. This service will accept a string
-and return the string reversed. The service might throw a TflyServiceException. If an exception is
-thrown, the service should be retried.
+You must have Gradle installed in your machine.
 
-## Message Sequence
+    gradle clean jar
 
-The server response should include the string returned from the TflyService along with a response
-sequence id that increments with every response.
+That should be enough to generate the server Jar and the executable script "run.sh", as shown below.
 
-If I execute two requests in telnet, I should see something like
-
-    > telnet localhost 4567
-    telnet> ticketfly
-
-    ylftekcit 12
-     
-    telnet> is_rad
+    marcello@hawaii:/u1/development/workspaces/open-source/challenges/interviews/ticketly$ gradle clean jar
+    :clean
+    :compileJava
+    :processResources UP-TO-DATE
+    :classes
+    :jar
     
-    dar_si 13
+    ##############################
+    WOOOHOOO! FINISHED!
+    You are ready to run the command "./run.sh --help" for instructions!
+    ##############################
 
-## Sequence Synchronization
+## Starting the Server
 
-A request string might have a sequence number after it separated by a space. If the sequence number is
-larger than the current sequence number in the server, the server must reset its sequence number to at
-least one higher than the passed in number.
+Just run the script "run.sh". It has the Java command to start the server.
 
-If I execute a request including a sequence number, I should see something like
+    marcello@hawaii:/u1/development/workspaces/open-source/challenges/interviews/ticketly$ ./run.sh 
+    TicketFly Server running, waiting connections on 192.168.190.190:4567
+    Developed by Marcello de Sales (marcello.desales@gmail.com)
 
-    > telnet localhost 4567
-    telnet> ticketfly
+Upon receiving a new connection, the server prints out just some info about the request and server status.
 
-    ylftekcit 12
-
-    telnet> is_rad 789
-
-    dar_si 790
-
-    telnet> and_ticketmaster_isnt
+    Thread Pool [ 50 , 50 ]
+    The Largest Pool size: 1
+    # of active threads: 0
+    # of maximum pool size:50
+    Handling client request Client [/127.0.0.1:39158]
     
-    tnsi_retsamtekcet_dna 791
+    Thread Pool [ 50 , 50 ]
+    The Largest Pool size: 2
+    # of active threads: 1
+    # of maximum pool size:50
+    Handling client request Client [/127.0.0.1:39159]
 
-## Server Specification
+## Interacting with the server
 
-  + The requests passed to the server will be dictionary words with no spaces or punctuation, except underscores are acceptable
-  + The server must handle concurrent requests
-  + Feel free to handle invalid requests in your own way
+The status above was initialized for 2 different clients. Simply telnet to the listening port.
 
-## Submission
+    marcello@hawaii:/u1/development/workspaces/open-source/google-go-tutorial/src$ telnet localhost 4567
+    Trying 127.0.0.1...
+    Connected to localhost.
+    Escape character is '^]'.
+    |
 
-Send the code and executable jar to aheadrick@ticketfly.com.
+At this point you can issue the commands to the server. Here's the interaction between two clients.
 
+## Allowed Commands 
 
+* "string"
+ - The server will return the reverted input with the current counter value "gnirts 1"
+
+* "string 3"
+ - The server will return the reverted input with the incremented value of the request "gnirts 4".
+ - Note that the reset value will only occur when the current server's value is smaller than the received one.
+
+* "/q"
+* "/quit"
+ - The server terminates the connection with the client. The ignored cases are also recognized as valid.
+
+## Session Example
+
+* Client 1
+
+    marcello@hawaii:/u1/development/workspaces/open-source/google-go-tutorial/src$ telnet localhost 4567
+    Trying 127.0.0.1...
+    Connected to localhost.
+    Escape character is '^]'.
+    Marcello
+    ollecraM 1
+    Go 4
+    oG 52
+    WrongInput noNumber
+    INCORRECT_REQUEST_PARAMETER(6): The parameter provided is incorrect.
+    /quit
+    Have a nice day!
+    Connection closed by foreign host.
+
+* Client 2
+
+    marcello@hawaii:/u1/development/workspaces/open-source/google-go-tutorial/src$ telnet localhost 4567
+    Trying 127.0.0.1...
+    Connected to localhost.
+    Escape character is '^]'.
+    Google
+    elgooG 2
+    Gradle 50
+    eldarG 51
+    /q
+    Have a nice day!
+    Connection closed by foreign host. 
