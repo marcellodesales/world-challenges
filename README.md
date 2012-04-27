@@ -21,7 +21,7 @@ That should be enough to generate the server Jar and the executable script "run.
     
     ##############################
     WOOOHOOO! FINISHED!
-    You are ready to run the command "./run.sh --help" for instructions!
+    You are ready to run the command "./run.sh"
     ##############################
 
 ## Starting the Server
