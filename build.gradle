@@ -1,0 +1,135 @@
+/*
+ * Build for a Java project
+ */
+apply plugin: "java"
+
+/*
+ * Generates the Eclipse project files. "gradle eclipse"
+ */
+apply plugin: 'eclipse'
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+  emma
+}
+
+dependencies {
+  // EMMS Code Coverage
+  emma "emma:emma:2.1.5320"
+  emma "emma:emma_ant:2.1.5320"
+
+  compile 'com.google.guava:guava:11.0.2'
+
+  testCompile group: 'junit', name: 'junit', version: '4.10'
+}
+
+/*
+ * The source compatibility
+ */
+sourceCompatibility = 1.7
+
+/*
+* Version of the jar generated for the core.
+*/
+version = 1.0
+
+archivesBaseName = "PROJECT-PACKAGE"
+def mainClient = archivesBaseName + "MAIN-CLASS"
+def jarName = "$archivesBaseName-$version" + ".jar"
+
+/*
+ * Creates a jar file
+ * http://gradle.org/java_plugin.html
+ */
+jar {
+   manifest {
+       attributes 'Implementation-Title': 'RSA Signr',
+                  'Implementation-Version': version, 'Created-By': "Marcello de Sales",
+                  'Main-Class': mainClient
+   }
+
+   doLast {
+     // adding the dependency of libraries into the runtime lib dir for execution of main class.
+     def dependsFileName
+     sourceSets.main.runtimeClasspath.each{ jarDependencyFile ->
+       if (jarDependencyFile.absolutePath.contains("guava")) {
+         dependsFileName = jarDependencyFile.name
+         ant.copy(file: jarDependencyFile.absolutePath, todir: "$buildDir/libs")
+       }
+     }
+
+     ant.echo(message: "java -cp $buildDir/libs/$jarName:$buildDir/libs/$dependsFileName $mainClient \$1",
+       file: "run.sh")
+     ant.chmod(file: "run.sh", perm: "+x")
+
+     println ""
+     println "##############################"
+     println "WOOOHOOO! FINISHED!"
+     println "You are ready to run the command \"./run.sh --help\" for instructions!"
+     println "##############################"
+   }
+}
+
+clean {
+  // cleaning the execution script
+  ant.delete(file: "run.sh")
+}
+
+test {
+  // add EMMA related JVM args to our tests
+  jvmArgs "-XX:-UseSplitVerifier", "-Demma.coverage.out.file=$buildDir/tmp/emma/metadata.emma", "-Demma.coverage.out.merge=true"
+
+  doFirst{
+    println "Instrumenting the classes at " + sourceSets.main.output.classesDir.absolutePath
+    // define the custom EMMA ant tasks
+    ant.taskdef( resource:"emma_ant.properties", classpath: configurations.emma.asPath)
+
+    ant.path(id:"run.classpath") {
+          pathelement(location: sourceSets.main.output.classesDir.absolutePath)
+    }
+
+    // make the temp EMMA temp directories
+    def emmaInstDir = new File(sourceSets.main.output.classesDir.parentFile.parentFile, "tmp/emma/instr")
+    emmaInstDir.mkdirs()
+    println "Creating $emmaInstDir to instrument from " + sourceSets.main.output.classesDir.absolutePath
+
+    // instruct our compiled classes and store them at $buildDir/tmp/emma/instr
+    ant.emma(enabled: 'true', verbosity: 'info'){
+        instr(merge:"true", destdir: emmaInstDir.absolutePath, instrpathref:"run.classpath",
+          metadatafile: new File(emmaInstDir, '/metadata.emma').absolutePath) {
+            instrpath {
+                fileset(dir:sourceSets.main.output.classesDir.absolutePath, includes:"**/*.class")
+            }
+        }
+    }
+    setClasspath(files("$buildDir/tmp/emma/instr") + configurations.emma +  getClasspath())
+  }
+
+  // The report should be generated directly after the tests are done.
+  // We create three types (txt, html, xml) of reports here. Running your build script now should
+  // result in output like that:
+  doLast{
+    def srcDir = sourceSets.main.java.srcDirs.toArray()[0]
+    println "Creating test coverage reports for classes  " + srcDir
+
+    def emmaInstDir = new File(sourceSets.main.output.classesDir.parentFile.parentFile, "tmp/emma")
+    ant.emma(enabled:"true"){
+      new File("$buildDir/reports/emma").mkdirs()
+      report(sourcepath: srcDir){
+        fileset(dir: emmaInstDir.absolutePath){
+          include(name:"**/*.emma")
+        }
+        txt(outfile:"$buildDir/reports/emma/coverage.txt")
+        html(outfile:"$buildDir/reports/emma/coverage.html")
+        xml(outfile:"$buildDir/reports/emma/coverage.xml")
+      }
+    }
+    println "Test coverage reports available at $buildDir/reports/emma."
+    println "txt: $buildDir/reports/emma/coverage.txt"
+    println "Test $buildDir/reports/emma/coverage.html"
+    println "Test $buildDir/reports/emma/coverage.xml"
+  }
+}
