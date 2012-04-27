@@ -6,13 +6,13 @@ counter.
 
 ## Building 
 
-You must have Gradle installed in your machine.
+You must have [Gradle](http://www.gradle.org/downloads) installed in your machine.
 
     gradle clean jar
 
 That should be enough to generate the server Jar and the executable script "run.sh", as shown below.
 
-    marcello@hawaii:/u1/development/workspaces/open-source/challenges/interviews/ticketly$ gradle clean jar
+    marcello@hawaii:/u1/development/workspaces/open-source/challenges/ticketly$ gradle clean jar
     :clean
     :compileJava
     :processResources UP-TO-DATE
@@ -28,7 +28,7 @@ That should be enough to generate the server Jar and the executable script "run.
 
 Just run the script "run.sh". It has the Java command to start the server.
 
-    marcello@hawaii:/u1/development/workspaces/open-source/challenges/interviews/ticketly$ ./run.sh 
+    marcello@hawaii:/u1/development/workspaces/open-source/challenges/ticketly$ ./run.sh 
     TicketFly Server running, waiting connections on 192.168.190.190:4567
     Developed by Marcello de Sales (marcello.desales@gmail.com)
 
@@ -103,3 +103,27 @@ Client 2: started the interaction after client 2, and set a new number.
     /q
     Have a nice day!
     Connection closed by foreign host.
+
+## Troubleshooting
+
+* After changing the code, make sure the important pieces are working! Run the server tests!
+
+    marcello@hawaii:/u1/development/workspaces/open-source/challenges/ticketly$ gradle test
+    :compileJava UP-TO-DATE
+    :processResources UP-TO-DATE
+    :classes UP-TO-DATE
+    :compileTestJava
+    :processTestResources UP-TO-DATE
+    :testClasses
+    :test
+    Instrumenting the classes at /u1/development/workspaces/open-source/challenges/ticketly/build/classes/main
+    Creating /u1/development/workspaces/open-source/challenges/ticketly/build/tmp/emma/instr to instrument from /u1/development/workspaces/open-source/challenges/ticketly/build/classes/main
+    Creating test coverage reports for classes  /u1/development/workspaces/open-source/challenges/ticketly/src/main/java
+    Test coverage reports available at /u1/development/workspaces/open-source/challenges/ticketly/build/reports/emma.
+    txt: /u1/development/workspaces/open-source/challenges/ticketly/build/reports/emma/coverage.txt
+    Test /u1/development/workspaces/open-source/challenges/ticketly/build/reports/emma/coverage.html
+    Test /u1/development/workspaces/open-source/challenges/ticketly/build/reports/emma/coverage.xml
+    
+    BUILD SUCCESSFUL
+    
+    Total time: 14.915 secs
