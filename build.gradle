@@ -22,6 +22,7 @@ dependencies {
   emma "emma:emma_ant:2.1.5320"
 
   compile 'com.google.guava:guava:11.0.2'
+  compile fileTree(dir: 'lib', include: '*.jar')
 
   testCompile group: 'junit', name: 'junit', version: '4.10'
 }
@@ -53,15 +54,16 @@ jar {
 
    doLast {
      // adding the dependency of libraries into the runtime lib dir for execution of main class.
-     def dependsFileName
+     def dependsOnJars = ""
+     def relativeLibsDir = "build/libs"
      sourceSets.main.runtimeClasspath.each{ jarDependencyFile ->
-       if (jarDependencyFile.absolutePath.contains("guava")) {
-         dependsFileName = jarDependencyFile.name
+       if (jarDependencyFile.isFile() && jarDependencyFile.name.endsWith(".jar")) {
+         dependsOnJars += ":$relativeLibsDir/${jarDependencyFile.name}"
          ant.copy(file: jarDependencyFile.absolutePath, todir: "$buildDir/libs")
        }
      }
 
-     ant.echo(message: "java -cp $buildDir/libs/$jarName:$buildDir/libs/$dependsFileName $mainClient \$1",
+     ant.echo(message: "java -cp $relativeLibsDir/$jarName$dependsOnJars $mainClient \$1",
        file: "run.sh")
      ant.chmod(file: "run.sh", perm: "+x")
 

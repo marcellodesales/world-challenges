@@ -2,6 +2,7 @@ package com.ticketfly.core.server.request;
 
 import javax.annotation.concurrent.Immutable;
 
+import com.ticketfly.TFlyService;
 import com.ticketfly.core.server.AtomicCounter;
 
 /**
@@ -24,7 +25,10 @@ public class ReverseStringUpdateCounterStrategy
     implements
       TicketFlyServerRequestHandler,
       RevertStringStrategy {
-
+  /**
+   * The ticket fly service that is used to revert the string.
+   */
+  private static final TFlyService tflyService = new TFlyService();
   /**
    * The request information containing the parameters and the type.
    */
@@ -36,7 +40,7 @@ public class ReverseStringUpdateCounterStrategy
   /**
    * The reverse string computed during initialization.
    */
-  private final String reverse;
+  private String reverse;
 
   /**
    * 
@@ -51,25 +55,33 @@ public class ReverseStringUpdateCounterStrategy
     this.requestInfo = requestInfo;
     this.serverSequenceCounter = counter;
 
-    switch (requestInfo.getRequestType()) {
-      case REVERSE_AND_RESET_COUNTER:
-        int requestedValue = Integer.valueOf(requestInfo.getCommandParameters()[1]);
-        if (requestedValue > serverSequenceCounter.value())
-          serverSequenceCounter.set(requestedValue);
+    synchronized (serverSequenceCounter) {
+      switch (requestInfo.getRequestType()) {
+        case REVERSE_AND_RESET_COUNTER:
+          int requestedValue = Integer.valueOf(requestInfo.getCommandParameters()[1]);
+          if (requestedValue > serverSequenceCounter.value())
+            serverSequenceCounter.set(requestedValue);
 
-        //$FALL-THROUGH$ as the value needs to be be incremented after being reset.
-      case REVERSE_STRING:
-        serverSequenceCounter.increment();
+          //$FALL-THROUGH$ as the value needs to be be incremented after being reset.
+        case REVERSE_STRING:
+          serverSequenceCounter.increment();
+      }
     }
 
-    // revert the string walking through half of it
-    String original = requestInfo.getCommandParameters()[0];
-    char[] revertChars = new char[original.length()];
-    for (int i = 0, j = revertChars.length - 1; i < (revertChars.length / 2) + 1; i++, j--) {
-      revertChars[i] = original.charAt(j);
-      revertChars[j] = original.charAt(i);
+    int retriesCount = 0;
+    while(true){
+      try {
+          reverse = tflyService.execute(requestInfo.getCommandParameters()[0]);
+          break;
+
+      } catch (TFlyService.TFlyServiceException serviceUnavailable){
+        retriesCount++;
+      }
     }
-    reverse = new String(revertChars);
+    if (retriesCount > 0) {
+      System.err.format("WARNING: The tfly service was retried %d times for request %s.\n", 
+        retriesCount, requestInfo.getCommandParameters()[0]);
+    }
   }
 
   @Override
