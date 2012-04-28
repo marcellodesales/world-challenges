@@ -10,6 +10,8 @@ You must have [Gradle](http://www.gradle.org/downloads) installed in your machin
 
     gradle clean jar
 
+The server includes the dependency to the TFlyService.jar provided to reverse Strings.
+
 That should be enough to generate the server Jar and the executable script "run.sh", as shown below.
 
     marcello@hawaii:/u1/development/workspaces/open-source/challenges/ticketly$ gradle clean jar
@@ -45,6 +47,13 @@ Upon receiving a new connection, the server prints out just some info about the 
     # of active threads: 1
     # of maximum pool size:50
     Handling client request Client [/127.0.0.1:39159]
+
+As service errors may occur (TFlyServiceExption) during the computation of reverse Strings 
+by the TFlyService, the server prints the number of attempts requested for a given String as 
+shown below.
+
+    WARNING: The tfly service was retried 1 times for request dfs.
+    WARNING: The tfly service was retried 1 times for request dg.
 
 ## Interacting with the server
 
@@ -105,6 +114,8 @@ Client 2: started the interaction after client 2, and set a new number.
     Connection closed by foreign host.
 
 ## Troubleshooting
+
+
 
 After changing the code, make sure the important pieces are working! Run the server tests!
 
