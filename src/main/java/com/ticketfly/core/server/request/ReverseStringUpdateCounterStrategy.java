@@ -3,6 +3,7 @@ package com.ticketfly.core.server.request;
 import javax.annotation.concurrent.Immutable;
 
 import com.ticketfly.TFlyService;
+import com.ticketfly.TFlyService.TFlyServiceException;
 import com.ticketfly.core.server.AtomicCounter;
 
 /**
@@ -74,7 +75,7 @@ public class ReverseStringUpdateCounterStrategy
           reverse = tflyService.execute(requestInfo.getCommandParameters()[0]);
           break;
 
-      } catch (TFlyService.TFlyServiceException serviceUnavailable){
+      } catch (TFlyServiceException serviceUnavailable){
         retriesCount++;
       }
     }

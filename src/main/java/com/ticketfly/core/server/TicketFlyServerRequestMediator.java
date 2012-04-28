@@ -35,7 +35,7 @@ public class TicketFlyServerRequestMediator implements Runnable {
   private AtomicCounter computationCounter;
 
   public TicketFlyServerRequestMediator(Socket client, AtomicCounter sharedCounter)
-      throws TflyServiceException {
+      throws TicketFlyServerException {
 
     clientSocket = client;
     computationCounter = sharedCounter;
@@ -51,16 +51,16 @@ public class TicketFlyServerRequestMediator implements Runnable {
    * 
    * @param clientSocket the socket client connection.
    * @return The received String from the client connection.
-   * @throws TflyServiceException if any problem occurs while reading the input from the client.
+   * @throws TicketFlyServerException if any problem occurs while reading the input from the client.
    */
-  private static String receiveClientInput(Socket clientSocket) throws TflyServiceException {
+  private static String receiveClientInput(Socket clientSocket) throws TicketFlyServerException {
     try {
       InputStream input = clientSocket.getInputStream();
       BufferedReader reader = new BufferedReader(new InputStreamReader(input));
       return reader.readLine();
 
     } catch (IllegalStateException | IOException errorWithStream) {
-      throw new TflyServiceException("Error while receiving message", errorWithStream);
+      throw new TicketFlyServerException("Error while receiving message", errorWithStream);
     }
   }
 
@@ -98,7 +98,7 @@ public class TicketFlyServerRequestMediator implements Runnable {
         responseHandler = new TicketFlyServerResponseHandler(clientSocket, decorator);
         responseHandler.sendResponse();
 
-      } catch (TflyServiceException wrongRequest) {
+      } catch (TicketFlyServerException wrongRequest) {
         String errorMsg = wrongRequest.getMessage();
         ResponseDecorator decorator = TicketFlyServerUserErrorHandler.makeErrorDecorator(errorMsg);
         responseHandler = new TicketFlyServerUserErrorHandler(clientSocket, decorator);

@@ -1,6 +1,6 @@
 package com.ticketfly.core.server;
 
-public class TflyServiceException extends Exception {
+public class TicketFlyServerException extends Exception {
 
   /**
    * The version.
@@ -11,7 +11,7 @@ public class TflyServiceException extends Exception {
    * <p>Apr 26, 2012 4:57:36 PM</p>
    * @param message the error message from the server.
    */
-  public TflyServiceException(String message) {
+  public TicketFlyServerException(String message) {
     super(message);
   }
 
@@ -20,7 +20,7 @@ public class TflyServiceException extends Exception {
    * @param message the error message from the server.
    * @param cause is what caused the error.
    */
-  public TflyServiceException(String message, Throwable cause) {
+  public TicketFlyServerException(String message, Throwable cause) {
     super(message, cause);
   }
 }

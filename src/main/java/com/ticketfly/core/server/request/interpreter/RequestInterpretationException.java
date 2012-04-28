@@ -1,8 +1,8 @@
 package com.ticketfly.core.server.request.interpreter;
 
-import com.ticketfly.core.server.TflyServiceException;
+import com.ticketfly.core.server.TicketFlyServerException;
 
-public class RequestInterpretationException extends TflyServiceException {
+public class RequestInterpretationException extends TicketFlyServerException {
 
   /**
    * The version.

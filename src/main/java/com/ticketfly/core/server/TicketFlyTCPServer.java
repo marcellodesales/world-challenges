@@ -145,7 +145,7 @@ public class TicketFlyTCPServer {
 
       System.exit(ServerTerminationError.CLIENT_CONNECTION_ERROR.getCode());
 
-    } catch (TflyServiceException error) {
+    } catch (TicketFlyServerException error) {
       error.printStackTrace();
     } 
   }
